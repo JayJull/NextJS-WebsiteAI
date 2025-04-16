@@ -3,25 +3,7 @@ import bcrypt from "bcryptjs";
 import { prisma } from "../prisma";
 import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
-
-interface LoginData {
-  username: string;
-  password: string;
-  rememberMe?: boolean;
-}
-
-interface LoginResult {
-  success: boolean;
-  error?: string;
-  ipAddress?: string;
-}
-
-interface ActivityLogData {
-  action: string;
-  details?: string;
-  ipAddress?: string;
-  userId?: number;
-}
+import { ActivityLogData, LoginData, LoginResult } from "@/app/data/UserData";
 
 export async function login(data: LoginData): Promise<LoginResult> {
   try {
