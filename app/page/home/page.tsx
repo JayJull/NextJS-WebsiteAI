@@ -1,6 +1,6 @@
 "use client";
 
-import { Layout } from "@/app/components/home.navbar/layout";
+import { Layout } from "@/app/components/layout";
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import AOS from "aos";
 import "aos/dist/aos.css";
@@ -1065,9 +1065,11 @@ const AiCard: React.FC = () => {
                     key={logo.id}
                     className="flex items-center justify-center mx-4 sm:mx-6 md:mx-8 min-w-[100px] sm:min-w-[140px] md:min-w-[180px]"
                   >
-                    <img
+                    <Image
                       src={logo.src}
                       alt={logo.alt}
+                      width={100}
+                      height={100}
                       className="h-8 sm:h-10 md:h-12 w-auto object-contain"
                     />
                   </div>
@@ -1079,9 +1081,11 @@ const AiCard: React.FC = () => {
                     key={`${logo.id}-duplicate`}
                     className="flex items-center justify-center mx-4 sm:mx-6 md:mx-8 min-w-[100px] sm:min-w-[140px] md:min-w-[180px]"
                   >
-                    <img
+                    <Image
                       src={logo.src}
                       alt={logo.alt}
+                      width={100}
+                      height={100}
                       className="h-8 sm:h-10 md:h-12 w-auto object-contain"
                     />
                   </div>
