@@ -118,13 +118,13 @@ const Navbar = ({
 
         <PopoverGroup className="hidden lg:flex lg:gap-x-12">
           <Link
-            href="/home"
+            href="/page/home"
             className="text-sm font-semibold text-white"
           >
             Home
           </Link>
           <Link
-            href="/pages/About"
+            href="/page/About"
             className="text-sm font-semibold text-white"
           >
             About

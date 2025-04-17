@@ -3,7 +3,7 @@ import bcrypt from "bcryptjs";
 import { prisma } from "../prisma";
 import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { ActivityLogData, LoginData, LoginResult } from "@/app/data/UserData";
+import { ActivityLog, ActivityLogData, LoginData, LoginResult } from "@/app/data/UserData";
 
 export async function login(data: LoginData): Promise<LoginResult> {
   try {
@@ -137,5 +137,56 @@ export async function logout(): Promise<void> {
   } catch (error) {
     console.error("Logout error:", error);
     redirect("/");
+  }
+}
+
+export async function isAuthenticated(): Promise<boolean> {
+  try {
+    const cookieStore = await cookies();
+    const sessionToken = cookieStore.get("sessionToken")?.value;
+    const userId = cookieStore.get("userId")?.value;
+    
+    if (!sessionToken || !userId) {
+      return false;
+    }
+    
+    // Check if session exists and is not expired
+    const session = await prisma.session.findFirst({
+      where: {
+        token: sessionToken,
+        userId: parseInt(userId),
+        expires: {
+          gt: new Date()
+        }
+      }
+    });
+    
+    return !!session;
+  } catch (error) {
+    console.error("Authentication check error:", error);
+    return false;
+  }
+}
+
+export async function getActivityLogs(limit = 50): Promise<ActivityLog[]> {
+  try {
+    const logs = await prisma.activityLog.findMany({
+      take: limit,
+      orderBy: {
+        timestamp: 'desc'
+      },
+      include: {
+        user: {
+          select: {
+            username: true
+          }
+        }
+      }
+    });
+    
+    return logs;
+  } catch (error) {
+    console.error("Error fetching activity logs:", error);
+    throw new Error("Failed to fetch activity logs");
   }
 }

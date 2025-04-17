@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 export async function middleware(request: NextRequest) {
-  if (request.nextUrl.pathname.startsWith('/page/Dashboard') || 
+  if (request.nextUrl.pathname.startsWith('/page/dashboard') || 
       request.nextUrl.pathname.startsWith('/admin')) {
     
     const sessionToken = request.cookies.get('sessionToken')?.value;
@@ -18,5 +18,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/page/Dashboard/:path*', '/admin/:path*'],
+  matcher: ['/page/dashboard/:path*', '/admin/:path*'],
 };

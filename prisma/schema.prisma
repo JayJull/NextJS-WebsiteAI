@@ -23,7 +23,7 @@ model Ai {
   id Int @id @default(autoincrement())
   name String @unique
   shortDesc String
-  longDesc String
+  longDesc  String  @db.Text
   url String
   shortLink String? @unique
   click Int @default(0)

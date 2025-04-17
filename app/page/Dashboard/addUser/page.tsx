@@ -1,5 +1,5 @@
 "use client";
-import { Layout } from "@/app/components/Dashboard/Layout";
+import { Layout } from "@/app/components/dashboard/Layout";
 import { useState, useEffect } from "react";
 import { FaUser, FaLock, FaPlus, FaTrash, FaEdit } from "react-icons/fa";
 

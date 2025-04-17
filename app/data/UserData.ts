@@ -17,3 +17,16 @@ export interface ActivityLogData {
   ipAddress?: string;
   userId?: number;
 }
+
+export interface ActivityLog {
+  id: number;
+  action: string;
+  details: string | null;
+  ipAddress: string | null;
+  userAgent: string | null;
+  userId: number | null;
+  timestamp: Date;
+  user?: {
+    username: string;
+  } | null;
+}
