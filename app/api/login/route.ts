@@ -140,33 +140,33 @@ export async function logout(): Promise<void> {
   }
 }
 
-export async function isAuthenticated(): Promise<boolean> {
-  try {
-    const cookieStore = await cookies();
-    const sessionToken = cookieStore.get("sessionToken")?.value;
-    const userId = cookieStore.get("userId")?.value;
+// export async function isAuthenticated(): Promise<boolean> {
+//   try {
+//     const cookieStore = await cookies();
+//     const sessionToken = cookieStore.get("sessionToken")?.value;
+//     const userId = cookieStore.get("userId")?.value;
     
-    if (!sessionToken || !userId) {
-      return false;
-    }
+//     if (!sessionToken || !userId) {
+//       return false;
+//     }
     
-    // Check if session exists and is not expired
-    const session = await prisma.session.findFirst({
-      where: {
-        token: sessionToken,
-        userId: parseInt(userId),
-        expires: {
-          gt: new Date()
-        }
-      }
-    });
+//     // Check if session exists and is not expired
+//     const session = await prisma.session.findFirst({
+//       where: {
+//         token: sessionToken,
+//         userId: parseInt(userId),
+//         expires: {
+//           gt: new Date()
+//         }
+//       }
+//     });
     
-    return !!session;
-  } catch (error) {
-    console.error("Authentication check error:", error);
-    return false;
-  }
-}
+//     return !!session;
+//   } catch (error) {
+//     console.error("Authentication check error:", error);
+//     return false;
+//   }
+// }
 
 export async function getActivityLogs(limit = 50): Promise<ActivityLog[]> {
   try {

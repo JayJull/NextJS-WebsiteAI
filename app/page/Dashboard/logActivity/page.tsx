@@ -1,19 +1,8 @@
 "use client"
 import { useState, useEffect } from "react";
-import { Layout } from "@/app/components/Dashboard/Layout";
-
-interface ActivityLog {
-  id: number;
-  action: string;
-  details: string | null;
-  timestamp: string | Date;
-  ipAddress: string | null;
-  userAgent: string | null;
-  userId: number | null;
-  user: {
-    username: string;
-  } | null;
-}
+import { Layout } from "@/app/components/dashboard/Layout";
+import { ActivityLog } from "@/app/data/UserData";
+import { getActivityLogs } from "@/app/api/login/route";
 
 const ActivityLogDashboard = () => {
   const [logs, setLogs] = useState<ActivityLog[]>([]);
@@ -22,7 +11,6 @@ const ActivityLogDashboard = () => {
 
   const fetchLogs = async () => {
     try {
-      const { getActivityLogs } = await import('@/lib/data');
       const activityLogs = await getActivityLogs();
       
       // Pastikan format data sesuai dengan yang diharapkan komponen

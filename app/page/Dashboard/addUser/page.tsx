@@ -2,12 +2,7 @@
 import { Layout } from "@/app/components/dashboard/Layout";
 import { useState, useEffect } from "react";
 import { FaUser, FaLock, FaPlus, FaTrash, FaEdit } from "react-icons/fa";
-
-interface User {
-  id: number;
-  username: string;
-  createdAt: string;
-}
+import { User } from "@/app/data/UserData"; 
 
 const AddUser = () => {
   const [username, setUsername] = useState("");
@@ -141,7 +136,7 @@ const AddUser = () => {
     }
 
     try {
-      const response = await fetch(`/apix/users/${currentEditUser.id}`, {
+      const response = await fetch(`/api/users/${currentEditUser.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

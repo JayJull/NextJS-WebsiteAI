@@ -1,24 +1,22 @@
-// File: app/api/admin/users/[id]/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "../../prisma";
 import bcrypt from "bcryptjs";
-import { isAuthenticated } from "@/app/api/login/route";
+// import { isAuthenticated } from "@/app/api/login/route";
 
-// PUT /api/admin/users/[id] - Update a user
 export async function PUT(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
-    // Check authentication
-    const authenticated = await isAuthenticated();
-    if (!authenticated) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const id = parseInt(params.id);
+    // // Check authentication
+    // const authenticated = await isAuthenticated();
+    // if (!authenticated) {
+    //   return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    // }
+    
+    const userId = parseInt(params.id);
     const { username, password } = await request.json();
-
+    
     // Validate input
     if (!username) {
       return NextResponse.json(
@@ -26,44 +24,32 @@ export async function PUT(
         { status: 400 }
       );
     }
-
-    // Check if user exists
-    const existingUser = await prisma.user.findUnique({
-      where: { id },
+    
+    // Check if username already exists (but not for this user)
+    const existingUser = await prisma.user.findFirst({
+      where: {
+        username,
+        id: { not: userId },
+      },
     });
-
-    if (!existingUser) {
+    
+    if (existingUser) {
       return NextResponse.json(
-        { message: "User tidak ditemukan" },
-        { status: 404 }
+        { message: "Username sudah digunakan" },
+        { status: 400 }
       );
     }
-
-    // Check if new username is already taken by another user
-    if (username !== existingUser.username) {
-      const usernameExists = await prisma.user.findUnique({
-        where: { username },
-      });
-
-      if (usernameExists) {
-        return NextResponse.json(
-          { message: "Username sudah digunakan" },
-          { status: 400 }
-        );
-      }
-    }
-
-    // Prepare update data
+    
+    // Update user data
     const updateData: any = { username };
-
-    // Update password if provided
+    
+    // Only update password if provided
     if (password) {
       updateData.password = await bcrypt.hash(password, 10);
     }
-
-    // Update user
+    
     const updatedUser = await prisma.user.update({
-      where: { id },
+      where: { id: userId },
       data: updateData,
       select: {
         id: true,
@@ -71,7 +57,7 @@ export async function PUT(
         createdAt: true,
       },
     });
-
+    
     // Log the activity
     await prisma.activityLog.create({
       data: {
@@ -82,7 +68,7 @@ export async function PUT(
         userAgent: request.headers.get("user-agent"),
       },
     });
-
+    
     return NextResponse.json(updatedUser);
   } catch (error) {
     console.error("Error updating user:", error);
@@ -93,51 +79,50 @@ export async function PUT(
   }
 }
 
-// DELETE /api/admin/users/[id] - Delete a user
+// DELETE /api/users/[id] - Delete a user
 export async function DELETE(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
-    // Check authentication
-    const authenticated = await isAuthenticated();
-    if (!authenticated) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const id = parseInt(params.id);
-
-    // Check if user exists
-    const existingUser = await prisma.user.findUnique({
-      where: { id },
+    // // Check authentication
+    // const authenticated = await isAuthenticated();
+    // if (!authenticated) {
+    //   return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    // }
+    
+    const userId = parseInt(params.id);
+    
+    // Find the user first to get the username for logging
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { username: true },
     });
-
-    if (!existingUser) {
+    
+    if (!user) {
       return NextResponse.json(
         { message: "User tidak ditemukan" },
         { status: 404 }
       );
     }
-
-    // Delete user
+    
+    // Delete the user
     await prisma.user.delete({
-      where: { id },
+      where: { id: userId },
     });
-
+    
     // Log the activity
     await prisma.activityLog.create({
       data: {
         action: "DELETE_USER",
-        details: `User ${existingUser.username} deleted`,
+        details: `User ${user.username} deleted`,
         userId: parseInt(request.cookies.get("userId")?.value || "0"),
         ipAddress: request.headers.get("x-forwarded-for")?.split(',')[0] || "IP tidak ditemukan",
         userAgent: request.headers.get("user-agent"),
       },
     });
-
-    return NextResponse.json({
-      message: "User berhasil dihapus",
-    });
+    
+    return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Error deleting user:", error);
     return NextResponse.json(

@@ -6,7 +6,7 @@ import AOS from "aos";
 import "aos/dist/aos.css";
 import AiCardComponents from "@/app/components/home.AiCard/Aicard";
 import { getAi, getKategori } from "@/app/api/AiCard/route";
-import { AiProps } from "@/app/types/aiCardProps";
+import { AiProps } from "@/app/data/AiData";
 import { useSearchParams } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/20/solid";

@@ -2,6 +2,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "../prisma";
 import { CreateAIData, UpdateAIData } from "@/app/data/AiData";
+import { logActivity } from "@/app/api/login/route";
 
 export async function getKategori() {
   try {
@@ -109,6 +110,12 @@ export async function createAi(data: CreateAIData) {
       },
     });
 
+    // Log the activity
+    await logActivity({
+      action: "create",
+      details: `Created AI tool: ${data.name}`,
+    });
+
     return {
       id: newAi.id,
       name: newAi.name,
@@ -213,6 +220,12 @@ export async function updateAi(data: UpdateAIData) {
       },
     });
 
+    // Log the activity
+    await logActivity({
+      action: "update",
+      details: `Updated AI tool: ${data.name} (ID: ${data.id})`,
+    });
+
     return {
       id: updatedAi.id,
       name: updatedAi.name,
@@ -252,6 +265,12 @@ export async function deleteAi(id: number) {
       where: {
         id: id,
       },
+    });
+
+    // Log the activity
+    await logActivity({
+      action: "delete",
+      details: `Deleted AI tool: ${existingAi.name} (ID: ${id})`,
     });
 
     return {
@@ -328,6 +347,12 @@ export async function importAi(request: Request) {
       })
     );
 
+    // Log the import activity
+    await logActivity({
+      action: "import",
+      details: `Imported ${results.imported} AI tools (${results.skipped} skipped)`,
+    });
+
     return NextResponse.json({
       message: "Import completed",
       imported: results.imported,
@@ -345,6 +370,20 @@ export async function importAi(request: Request) {
 
 export async function incrementClick(shortLink: string) {
   try {
+    const ai = await prisma.ai.findUnique({
+      where: {
+        shortLink: shortLink,
+      },
+      select: {
+        id: true,
+        name: true,
+      },
+    });
+
+    if (!ai) {
+      return { success: false };
+    }
+
     await prisma.ai.updateMany({
       where: {
         shortLink: shortLink,

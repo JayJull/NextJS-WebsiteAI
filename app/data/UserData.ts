@@ -1,3 +1,8 @@
+export interface User {
+  id: number;
+  username: string;
+  createdAt: string;
+}
 
 export interface LoginData {
   username: string;

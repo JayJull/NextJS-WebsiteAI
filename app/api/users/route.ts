@@ -1,18 +1,18 @@
-
+// File: app/api/users/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "../prisma";
 import bcrypt from "bcryptjs";
-import { isAuthenticated } from "@/app/api/login/route";
+// import { isAuthenticated } from "@/app/api/login/route";
 
-// GET /api/admin/users - Fetch all users
+// GET /api/users - Fetch all users
 export async function GET(request: NextRequest) {
   try {
-    // Check authentication
-    const authenticated = await isAuthenticated();
-    if (!authenticated) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
+    // // Check authentication
+    // const authenticated = await isAuthenticated();
+    // if (!authenticated) {
+    //   return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    // }
+    
     const users = await prisma.user.findMany({
       select: {
         id: true,
@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
         createdAt: "desc",
       },
     });
-
+    
     return NextResponse.json(users);
   } catch (error) {
     console.error("Error fetching users:", error);
@@ -34,16 +34,17 @@ export async function GET(request: NextRequest) {
   }
 }
 
+// POST /api/users - Create a new user
 export async function POST(request: NextRequest) {
   try {
-    // Check authentication
-    const authenticated = await isAuthenticated();
-    if (!authenticated) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
+    // // Check authentication
+    // const authenticated = await isAuthenticated();
+    // if (!authenticated) {
+    //   return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    // }
+    
     const { username, password } = await request.json();
-
+    
     // Validate input
     if (!username || !password) {
       return NextResponse.json(
@@ -51,22 +52,22 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
-
+    
     // Check if username already exists
     const existingUser = await prisma.user.findUnique({
       where: { username },
     });
-
+    
     if (existingUser) {
       return NextResponse.json(
         { message: "Username sudah digunakan" },
         { status: 400 }
       );
     }
-
+    
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
-
+    
     // Create user
     const newUser = await prisma.user.create({
       data: {
@@ -79,7 +80,7 @@ export async function POST(request: NextRequest) {
         createdAt: true,
       },
     });
-
+    
     // Log the activity
     await prisma.activityLog.create({
       data: {
@@ -90,7 +91,7 @@ export async function POST(request: NextRequest) {
         userAgent: request.headers.get("user-agent"),
       },
     });
-
+    
     return NextResponse.json(newUser, { status: 201 });
   } catch (error) {
     console.error("Error creating user:", error);
