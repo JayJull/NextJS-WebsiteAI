@@ -45,7 +45,7 @@ const LoginPopUp = ({ onClose, onLoginSuccess }: LoginPopUpProps) => {
         }
 
         // Redirect to Dashboard
-        window.location.href = "/page/Dashboard";
+        window.location.href = "/page/dashboard";
       } else {
         setError(result.error || "Login gagal. Silakan coba lagi.");
       }

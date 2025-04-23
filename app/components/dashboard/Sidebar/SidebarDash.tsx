@@ -31,7 +31,7 @@ export const SidebarDash = ({ isSidebarOpen }: { isSidebarOpen: boolean }) => {
                     </Link>
                 </li>
                 <li>
-                    <Link href="/page/Dashboard/Manage">
+                    <Link href="/page/dashboard/Manage">
                         <div className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white dark:hover:bg-gray-700 hover:bg-gray-100">
                             <FaListAlt className="mr-3" />
                             <span>Manage AI</span>
@@ -39,7 +39,7 @@ export const SidebarDash = ({ isSidebarOpen }: { isSidebarOpen: boolean }) => {
                     </Link>
                 </li>
                 <li>
-                    <Link href="/page/Dashboard/addUser">
+                    <Link href="/page/dashboard/addUser">
                         <div className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white dark:hover:bg-gray-700 hover:bg-gray-100">
                             <FaListAlt className="mr-3" />
                             <span>Add User</span>
@@ -47,7 +47,7 @@ export const SidebarDash = ({ isSidebarOpen }: { isSidebarOpen: boolean }) => {
                     </Link>
                 </li>
                 <li>
-                    <Link href="/page/Dashboard/logActivity">
+                    <Link href="/page/dashboard/logActivity">
                         <div className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white dark:hover:bg-gray-700 hover:bg-gray-100">
                             <FaListAlt className="mr-3" />
                             <span>Log Activity</span>

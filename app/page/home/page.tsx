@@ -16,6 +16,7 @@ import { blockContent } from "@/app/data/blokContent";
 import { news } from "@/app/data/news";
 import Link from "next/link";
 import { logos } from "@/app/data/logo";
+import { PulseLoader } from "react-spinners";
 
 const item_per_load = 5;
 const search_delay_perMS = 200;
@@ -640,6 +641,15 @@ const AiCard: React.FC = () => {
       performLiveSearch("", selectedCategory);
     }
   };
+
+  if (loading) {
+    return (
+      <div className="flex flex-col justify-center items-center h-screen bg-gray-900">
+        <PulseLoader color="#ffffff" size={15} />
+        <p className="mt-4 text-white text-lg font-semibold">Loading...</p>
+      </div>
+    );
+  }
 
   return (
     <Layout>
