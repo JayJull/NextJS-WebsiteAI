@@ -22,7 +22,7 @@ const Navbar = ({
   const [showLoginModal, setLocalShowLoginModal] = useState(
     initialShowLoginModal
   );
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [, setIsLoggedIn] = useState(false);
 
   // Use the external state setter if provided, otherwise use the local one
   const handleSetShowLoginModal = (value: boolean) => {
@@ -48,19 +48,6 @@ const Navbar = ({
   useEffect(() => {
     window.addEventListener("scroll", handleScroll);
 
-    // Check if user is logged in
-    const checkLoginStatus = async () => {
-      try {
-        // You can replace this with your actual check from cookies or localStorage
-        const userId = document.cookie.includes("userId=");
-        setIsLoggedIn(userId);
-      } catch (error) {
-        console.error("Error checking login status:", error);
-      }
-    };
-
-    checkLoginStatus();
-
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
@@ -68,17 +55,6 @@ const Navbar = ({
 
   const handleLogin = () => {
     handleSetShowLoginModal(true);
-  };
-
-  const handleLogout = async () => {
-    try {
-      // Import dynamically to avoid server component issues
-      const { logout } = await import("@/app/api/login/route");
-      await logout();
-      setIsLoggedIn(false);
-    } catch (error) {
-      console.error("Logout error:", error);
-    }
   };
 
   // The actual showLoginModal value to use in the component
@@ -131,23 +107,7 @@ const Navbar = ({
           </Link>
         </PopoverGroup>
 
-        <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-          {isLoggedIn ? (
-            <div className="flex items-center gap-4">
-              <a
-                href="/pages/Dashboard"
-                className="text-white bg-blue-700 hover:bg-blue-800 font-sans rounded-full text-sm font-semibold px-6 py-3 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-              >
-                Dashboard
-              </a>
-              <button
-                onClick={handleLogout}
-                className="text-white hover:text-blue-200 font-sans text-sm font-semibold px-4 py-2 me-16"
-              >
-                Logout
-              </button>
-            </div>
-          ) : (
+        <div className="hidden lg:flex lg:flex-1 lg:justify-end">        
             <div className="flex items-center gap-4">
               <button
                 onClick={handleLogin}
@@ -155,8 +115,7 @@ const Navbar = ({
               >
                 Login
               </button>
-            </div>
-          )}
+            </div>        
         </div>
       </nav>
 
@@ -243,26 +202,6 @@ const Navbar = ({
 
                         {/* Account Section */}
                         <div className="px-6 py-10 mt-auto">
-                          {isLoggedIn ? (
-                            <div className="space-y-6">
-                              <a
-                                href="/pages/Dashboard"
-                                className="flex w-full justify-center items-center bg-white text-blue-900 rounded-full px-6 py-3 text-base font-medium shadow-md hover:bg-gray-100 transition-colors"
-                                onClick={() => setMobileMenu(false)}
-                              >
-                                Dashboard
-                              </a>
-                              <button
-                                onClick={() => {
-                                  handleLogout();
-                                  setMobileMenu(false);
-                                }}
-                                className="flex w-full justify-center text-white border border-white rounded-full px-6 py-3 text-base font-medium hover:bg-white/10 transition-colors"
-                              >
-                                Logout
-                              </button>
-                            </div>
-                          ) : (
                             <button
                               onClick={() => {
                                 setMobileMenu(false);
@@ -272,7 +211,6 @@ const Navbar = ({
                             >
                               Login
                             </button>
-                          )}
                         </div>
                       </div>
                     </div>

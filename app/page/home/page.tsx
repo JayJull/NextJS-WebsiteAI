@@ -390,8 +390,6 @@ const AiCard: React.FC = () => {
   // Load more function
   const loadMore = () => {
     setLoadingMore(true);
-
-    // Simulate network delay (remove in production)
     setTimeout(() => {
       const newVisibleCount = visibleCount + item_per_load;
       setVisibleCount(newVisibleCount);
