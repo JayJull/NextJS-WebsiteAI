@@ -42,7 +42,7 @@ const AiCard: React.FC = () => {
   const [searchLoading, setSearchLoading] = useState<boolean>(false);
   const [liveSearchActive, setLiveSearchActive] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const [keywords, setKeywords] = useState<string[]>([]);
+  const [, setKeywords] = useState<string[]>([]);
   const [visibleCount, setVisibleCount] = useState<number>(item_per_load);
   const [hasMore, setHasMore] = useState<boolean>(true);
   const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -358,7 +358,7 @@ const AiCard: React.FC = () => {
     }
 
     const keywordMappings: Record<string, string> = {};
-    Object.entries(categoryKeywordMap).forEach(([category, keywords]) => {
+    Object.entries(categoryKeywordMap).forEach(([, keywords]) => {
       if (keywords.length > 0) {
         const primaryTerm = keywords[0];
         keywords.slice(1).forEach((altTerm) => {
@@ -675,53 +675,41 @@ const AiCard: React.FC = () => {
       </div>
 
       {/* Main Content Section - Improved spacing for different device sizes */}
-      <section
-        className="py-8 sm:py-16 md:py-24 px-4 sm:px-6 md:px-8 lg:px-12 xl:px-24 -mt-10 sm:-mt-16 md:-mt-24 relative z-20"
-        ref={resultsRef}
+      <section className="py-8 sm:py-16 md:py-24 px-4 sm:px-6 md:px-8 lg:px-12 xl:px-24 relative z-20" ref={resultsRef}>
+      {/* Search Form */}
+      <div
+        className="max-w-xl mx-auto"
+        data-aos="fade-up"
+        data-aos-delay="700"
+        data-aos-once="true"
       >
-        {/* Search Form - More compact on mobile, expands on larger screens */}
-        <div
-          className="max-w-xl mx-auto"
-          data-aos="fade-up"
-          data-aos-delay="700"
-          data-aos-once="true"
+        <form
+          className="mt-20 bg-white/20 backdrop-blur-lg rounded-2xl shadow-2xl p-3 sm:p-4 transition-all duration-300 hover:bg-white/30 border border-white/30"
+          onSubmit={handleSubmit}
         >
-          <form
-            className="bg-white/20 backdrop-blur-lg rounded-2xl shadow-2xl p-3 sm:p-4 transition-all duration-300 hover:bg-white/30 border border-white/30"
-            onSubmit={handleSubmit}
-          >
-            <div className="flex flex-col sm:flex-row gap-3">
-              {/* Dropdown Button - Full width on mobile, auto width on tablet/desktop */}
-              <div className="relative w-full sm:w-auto order-2 sm:order-1">
-                <button
-                  id="dropdown-button"
-                  type="button"
-                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                  className="w-full sm:w-auto transition-all duration-300 inline-flex items-center justify-between py-2.5 sm:py-3 px-3 sm:px-4 text-sm font-medium text-gray-900 bg-gray-50/90 backdrop-blur-sm hover:bg-gray-100 border border-gray-200 rounded-xl hover:shadow-md"
-                  disabled={searchLoading}
-                >
-                  <span className="truncate max-w-[150px]">
-                    {selectedCategory}
-                  </span>
-                  {isDropdownOpen ? (
-                    <ChevronUpIcon
-                      className="w-4 h-4 ms-2"
-                      aria-hidden="true"
-                    />
-                  ) : (
-                    <ChevronDownIcon
-                      className="w-4 h-4 ms-2"
-                      aria-hidden="true"
-                    />
-                  )}
-                </button>
+          <div className="flex flex-col sm:flex-row gap-3">
+            {/* Dropdown Button */}
+            <div className="relative w-full sm:w-auto order-2 sm:order-1">
+              <button
+                id="dropdown-button"
+                type="button"
+                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                className="w-full sm:w-auto transition-all duration-300 inline-flex items-center justify-between py-2.5 sm:py-3 px-3 sm:px-4 text-sm font-medium text-gray-900 bg-gray-50/90 backdrop-blur-sm hover:bg-gray-100 border border-gray-200 rounded-xl hover:shadow-md"
+                disabled={searchLoading}
+              >
+                <span className="truncate max-w-[150px]">{selectedCategory}</span>
+                {isDropdownOpen ? (
+                  <ChevronUpIcon className="w-4 h-4 ms-2" aria-hidden="true" />
+                ) : (
+                  <ChevronDownIcon className="w-4 h-4 ms-2" aria-hidden="true" />
+                )}
+              </button>
 
-                {/* Dropdown - Mobile-friendly positioning */}
+              {/* Dropdown - Using fixed position with relative parent */}
+              {isDropdownOpen && (
                 <div
                   id="dropdown"
-                  className={`z-20 ${
-                    isDropdownOpen ? "block" : "hidden"
-                  } bg-white/95 backdrop-blur-md divide-y divide-gray-100 rounded-xl shadow-lg border border-gray-100 w-full sm:w-48 absolute mt-1 transition-all overflow-hidden`}
+                  className="z-20 bg-white/95 backdrop-blur-md divide-y divide-gray-100 rounded-xl shadow-lg border border-gray-100 w-full sm:w-48 absolute top-full left-0 mt-1 transition-all overflow-hidden"
                 >
                   <ul
                     className="py-1 text-sm text-gray-700 max-h-48 sm:max-h-60 overflow-y-auto"
@@ -740,65 +728,65 @@ const AiCard: React.FC = () => {
                     ))}
                   </ul>
                 </div>
-              </div>
+              )}
+            </div>
 
-              {/* Search Input - Full width on all devices */}
-              <div className="relative flex-1 order-1 sm:order-2">
-                <div className="relative">
-                  <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+            {/* Search Input */}
+            <div className="relative flex-1 order-1 sm:order-2">
+              <div className="flex items-center bg-gray-50/90 backdrop-blur-sm border border-gray-200 rounded-xl hover:shadow-md transition-all">
+                <div className="flex items-center pl-3">
+                  <svg
+                    className="w-4 h-4 text-gray-500"
+                    aria-hidden="true"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      stroke="currentColor"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+                    />
+                  </svg>
+                </div>
+                <input
+                  type="search"
+                  id="search-dropdown"
+                  value={searchQuery}
+                  onChange={handleSearchChange}
+                  className="block p-2.5 sm:p-3 w-full text-sm text-gray-900 bg-transparent focus:ring-blue-500 focus:border-blue-500 placeholder-gray-400 border-0"
+                  placeholder="Search AI tools, platforms, services..."
+                  required
+                  disabled={searchLoading}
+                />
+                {searchQuery && (
+                  <button
+                    type="button"
+                    onClick={handleClearSearch}
+                    className="text-gray-500 hover:text-gray-700 p-1 mr-1"
+                    aria-label="Clear search"
+                  >
                     <svg
-                      className="w-4 h-4 text-gray-500"
-                      aria-hidden="true"
-                      xmlns="http://www.w3.org/2000/svg"
+                      className="w-4 h-4"
                       fill="none"
-                      viewBox="0 0 20 20"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
                     >
                       <path
-                        stroke="currentColor"
                         strokeLinecap="round"
                         strokeLinejoin="round"
                         strokeWidth="2"
-                        d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
-                      />
+                        d="M6 18L18 6M6 6l12 12"
+                      ></path>
                     </svg>
-                  </div>
-                  <input
-                    type="search"
-                    id="search-dropdown"
-                    value={searchQuery}
-                    onChange={handleSearchChange}
-                    className="block p-2.5 sm:p-3 ps-10 w-full text-sm text-gray-900 bg-gray-50/90 backdrop-blur-sm border border-gray-200 rounded-xl focus:ring-blue-500 focus:border-blue-500 transition-all placeholder-gray-400 hover:shadow-md"
-                    placeholder="Search AI tools, platforms, services..."
-                    required
-                    disabled={searchLoading}
-                  />
-                  {searchQuery && (
-                    <button
-                      type="button"
-                      onClick={handleClearSearch}
-                      className="absolute right-12 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 p-1"
-                      aria-label="Clear search"
-                    >
-                      <svg
-                        className="w-4 h-4"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M6 18L18 6M6 6l12 12"
-                        ></path>
-                      </svg>
-                    </button>
-                  )}
-                </div>
+                  </button>
+                )}
                 <button
                   type="submit"
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 text-sm font-medium text-white bg-blue-600 rounded-lg p-2 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 transition-all duration-300 shadow-md hover:shadow-lg"
+                  className="text-sm font-medium text-white bg-blue-600 rounded-lg p-2 m-1 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 transition-all duration-300 shadow-md hover:shadow-lg"
                   disabled={searchLoading}
                 >
                   {searchLoading ? (
@@ -826,111 +814,104 @@ const AiCard: React.FC = () => {
                 </button>
               </div>
             </div>
-          </form>
-        </div>
-
-        {/* Results Section */}
-        <div className="mt-6 sm:mt-8">
-          {/* Results Header - Stack on mobile, row on desktop */}
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-0 mb-4 sm:mb-6">
-            <p className="text-black text-sm sm:text-base">
-              Showing {visibleTools.length} of {filteredTools.length} results
-              {filteredTools.length > 0 &&
-              visibleTools.length < filteredTools.length
-                ? ` (${
-                    filteredTools.length - visibleTools.length
-                  } more available)`
-                : ""}
-            </p>
-            {liveSearchActive && (
-              <p className="text-xs sm:text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
-                Live search results
-              </p>
-            )}
           </div>
+        </form>
+      </div>
 
-          {/* Loading State */}
-          {loading ? (
-            <div className="text-center py-10 flex items-center justify-center">
-              <Loader2 className="h-6 w-6 sm:h-8 sm:w-8 animate-spin text-blue-600 mr-2" />
-              <span>Loading...</span>
-            </div>
-          ) : error ? (
-            <div className="text-center py-8 sm:py-10 text-red-600 bg-red-50 rounded-xl p-4">
-              <p className="font-medium">{error}</p>
-              <p className="mt-2 text-sm text-red-500">
-                Please try again later or contact support if the problem
-                persists.
-              </p>
-            </div>
-          ) : visibleTools.length === 0 ? (
-            <div className="text-center py-8 sm:py-10 bg-gray-50 rounded-xl p-4">
-              <p className="font-medium">
-                No AI tools found matching your criteria.
-              </p>
-              <p className="mt-2 text-sm text-gray-600">
-                Try using different keywords or removing filters.
-              </p>
-              <button
-                onClick={handleClearSearch}
-                className="mt-4 px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors"
-              >
-                Clear Search
-              </button>
-            </div>
-          ) : (
-            // Results Grid - Single column on all devices for list view
-            <div className="grid gap-4 grid-cols-1">
-              {visibleTools.map((tool) => (
-                <div
-                  key={tool.id}
-                  className="border border-gray-200 hover:border-blue-300 transition-colors duration-300 rounded-xl overflow-hidden shadow-sm hover:shadow-md bg-white"
-                  data-aos="fade-up"
-                  data-aos-once="true"
-                >
-                  <AiCardComponents
-                    logo={tool.gambar}
-                    name={tool.name}
-                    category={tool.kategori.nama}
-                    shortDesc={tool.shortDesc}
-                    url={tool.url}
-                    shortLink={tool.shortLink || ""}
-                  />
-                </div>
-              ))}
-            </div>
+      {/* Results Section */}
+      <div className="mt-6 sm:mt-8">
+        {/* Results Header */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-0 mb-4 sm:mb-6">
+          <p className="text-black text-sm sm:text-base">
+            Showing {visibleTools.length} of {filteredTools.length} results
+            {filteredTools.length > 0 && visibleTools.length < filteredTools.length
+              ? ` (${filteredTools.length - visibleTools.length} more available)`
+              : ""}
+          </p>
+          {liveSearchActive && (
+            <p className="text-xs sm:text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
+              Live search results
+            </p>
           )}
-
-          {/* Load More Button - Responsive sizing */}
-          {hasMore && !loading && visibleTools.length > 0 && (
-            <div className="flex justify-center mt-6 sm:mt-8">
-              <button
-                onClick={loadMore}
-                disabled={loadingMore}
-                className="px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors duration-300 shadow-md hover:shadow-lg flex items-center justify-center"
-              >
-                {loadingMore ? (
-                  <>
-                    <Loader2 className="w-4 h-4 sm:w-5 sm:h-5 animate-spin mr-2" />
-                    Loading...
-                  </>
-                ) : (
-                  "Load More"
-                )}
-              </button>
-            </div>
-          )}
-
-          {/* Shown All Message - Responsive text size */}
-          {!hasMore &&
-            visibleTools.length > 0 &&
-            visibleTools.length === filteredTools.length && (
-              <div className="text-center mt-6 sm:mt-8 text-sm sm:text-base text-gray-600">
-                All results have been loaded
-              </div>
-            )}
         </div>
-      </section>
+
+        {/* Loading State */}
+        {loading ? (
+          <div className="text-center py-10 flex items-center justify-center">
+            <Loader2 className="h-6 w-6 sm:h-8 sm:w-8 animate-spin text-blue-600 mr-2" />
+            <span>Loading...</span>
+          </div>
+        ) : error ? (
+          <div className="text-center py-8 sm:py-10 text-red-600 bg-red-50 rounded-xl p-4">
+            <p className="font-medium">{error}</p>
+            <p className="mt-2 text-sm text-red-500">
+              Please try again later or contact support if the problem persists.
+            </p>
+          </div>
+        ) : visibleTools.length === 0 ? (
+          <div className="text-center py-8 sm:py-10 bg-gray-50 rounded-xl p-4">
+            <p className="font-medium">No AI tools found matching your criteria.</p>
+            <p className="mt-2 text-sm text-gray-600">
+              Try using different keywords or removing filters.
+            </p>
+            <button
+              onClick={handleClearSearch}
+              className="mt-4 px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Clear Search
+            </button>
+          </div>
+        ) : (
+          // Results Grid
+          <div className="grid gap-4 grid-cols-1">
+            {visibleTools.map((tool) => (
+              <div
+                key={tool.id}
+                className="border border-gray-200 hover:border-blue-300 transition-colors duration-300 rounded-xl overflow-hidden shadow-sm hover:shadow-md bg-white"
+                data-aos="fade-up"
+                data-aos-once="true"
+              >
+                <AiCardComponents
+                  logo={tool.gambar}
+                  name={tool.name}
+                  category={tool.kategori.nama}
+                  shortDesc={tool.shortDesc}
+                  url={tool.url}
+                  shortLink={tool.shortLink || ""}
+                />
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Load More Button */}
+        {hasMore && !loading && visibleTools.length > 0 && (
+          <div className="flex justify-center mt-6 sm:mt-8">
+            <button
+              onClick={loadMore}
+              disabled={loadingMore}
+              className="px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors duration-300 shadow-md hover:shadow-lg flex items-center justify-center"
+            >
+              {loadingMore ? (
+                <>
+                  <Loader2 className="w-4 h-4 sm:w-5 sm:h-5 animate-spin mr-2" />
+                  Loading...
+                </>
+              ) : (
+                "Load More"
+              )}
+            </button>
+          </div>
+        )}
+
+        {/* Shown All Message */}
+        {!hasMore && visibleTools.length > 0 && visibleTools.length === filteredTools.length && (
+          <div className="text-center mt-6 sm:mt-8 text-sm sm:text-base text-gray-600">
+            All results have been loaded
+          </div>
+        )}
+      </div>
+    </section>
 
       <section aria-label="Content 2" className="mt-16 md:mt-36 py-10">
         <div className="container mx-auto px-4">
